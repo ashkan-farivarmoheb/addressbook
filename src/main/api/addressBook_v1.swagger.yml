@@ -358,6 +358,90 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ProblemDetail'
+  /v1/addressbooks/contacts:
+    get:
+      tags:
+        - address-book-controller
+      operationId: getAllContacts
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: x-username
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageGetContactsResponse'
+        "400":
+          description: >-
+            Validation Error - Thrown if an input error is caught or unspecified Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "401":
+          description: >-
+            Unauthorised - Thrown when user is NOT authorised to call an API or perform a required functionality
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "403":
+          description: >-
+            Forbidden - Thrown when a user cannot access some data or resource
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "404":
+          description: >-
+            Resource Not Available
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "429":
+          description: >-
+            Too Many Requests
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "500":
+          description: >-
+            Thrown when the service is experiencing internal errors from which it cannot recover
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "503":
+          description: >-
+            Thrown when backend integration points experience a system/technical Error and is not reachable
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "504":
+          description: >-
+            Thrown when backedn inteegration points eperience timeout
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
 components:
   schemas:
     ProblemDetail:
@@ -468,6 +552,8 @@ components:
         phoneNumber:
           pattern: "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[-\
             \ ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$"
+          type: string
+        addressName:
           type: string
         type:
           type: string

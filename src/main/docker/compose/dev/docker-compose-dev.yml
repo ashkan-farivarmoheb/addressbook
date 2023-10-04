@@ -4,7 +4,7 @@ services:
 
   addressbook:
     container_name: ms-address-book_container
-    image: ashkanfarivarmoheb/addressbook:0.0.1
+    image: ashkanfarivarmoheb/addressbook
     links:
       - postgres-db
     ports:
