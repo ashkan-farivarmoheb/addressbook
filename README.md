@@ -3,7 +3,9 @@
 
 # Run in locally
 1- ./gradlew clean build -x test
+
 2- ./gradlew startTestEnvironment
+
 3- ./gradlew bootRun --args='--spring.profiles.active=dev'
 
 # Run in application via docker-compose
@@ -58,3 +60,11 @@ http://localhost:8090/ms-address-book/actuator/health/readiness
 
 ## liveness
 http://localhost:8090/ms-address-book/actuator/health/liveness
+
+
+# Swagger API
+Swagger Api is here src/main/api/addressBook_v1.swagger.yml
+
+http://localhost:8090/ms-address-book/swagger-ui/index.html
+
+note: you can also go to the https://editor.swagger.io/ and paste the above file to check it or update it manually
