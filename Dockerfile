@@ -2,7 +2,7 @@ FROM eclipse-temurin:17.0.5_8-jre-alpine@sha256:02c04793fa49ad5cd193c96140322375
 WORKDIR /opt/app
 RUN addgroup --system javauser && adduser -S -s /usr/sbin/nologin -G javauser javauser
 RUN mkdir /app
-COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
+COPY build/libs/*.jar /app/spring-boot-application.jar
 RUN chown -R javauser:javauser .
 USER javauser
-ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/spring-boot-application.jar"]
+ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/spring-boot-application.jar"]

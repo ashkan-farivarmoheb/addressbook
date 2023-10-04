@@ -1,8 +1,18 @@
 version: '3.5'
 
 services:
+
+  addressbook:
+    container_name: ms-address-book_container
+    image: ashkanfarivarmoheb/addressbook:0.0.1
+    links:
+      - postgres-db
+    ports:
+      - "8090:8090"
+    env_file:
+      - docker-se-dev.env
+
   postgres-db:
-    container_name: postgres-db_container
     image: postgres
     command: postgres -c 'max_connections=200'
     healthcheck:
