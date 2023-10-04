@@ -1,0 +1,20 @@
+version: '3.5'
+
+services:
+  postgres-db:
+    container_name: postgres-db_container
+    image: postgres
+    command: postgres -c 'max_connections=200'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reece"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    ulimits:
+      nproc: 65545
+    ports:
+      - "5432:5432"
+    env_file:
+      - docker-psql-test.env
+    restart: unless-stopped
+

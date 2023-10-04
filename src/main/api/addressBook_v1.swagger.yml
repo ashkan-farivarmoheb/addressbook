@@ -1,0 +1,548 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8090/ms-address-book
+    description: Generated server url
+paths:
+  /v1/addressbooks:
+    post:
+      tags:
+        - address-book-controller
+      operationId: create
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: x-username
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAddressBookRequest'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CreateAddressBookResponse'
+        "400":
+          description: >-
+            Validation Error - Thrown if an input error is caught or unspecified Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "401":
+          description: >-
+            Unauthorised - Thrown when user is NOT authorised to call an API or perform a required functionality
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "403":
+          description: >-
+            Forbidden - Thrown when a user cannot access some data or resource
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "404":
+          description: >-
+            Resource Not Available
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "429":
+          description: >-
+            Too Many Requests
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "500":
+          description: >-
+            Thrown when the service is experiencing internal errors from which it cannot recover
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "503":
+          description: >-
+            Thrown when backend integration points experience a system/technical Error and is not reachable
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "504":
+          description: >-
+            Thrown when backedn inteegration points eperience timeout
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  /v1/addressbooks/{addressId}/contacts:
+    get:
+      tags:
+        - address-book-controller
+      operationId: getContacts
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: x-username
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: addressId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: pageable
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/Pageable'
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PageGetContactsResponse'
+        "400":
+          description: >-
+            Validation Error - Thrown if an input error is caught or unspecified Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "401":
+          description: >-
+            Unauthorised - Thrown when user is NOT authorised to call an API or perform a required functionality
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "403":
+          description: >-
+            Forbidden - Thrown when a user cannot access some data or resource
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "404":
+          description: >-
+            Resource Not Available
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "429":
+          description: >-
+            Too Many Requests
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "500":
+          description: >-
+            Thrown when the service is experiencing internal errors from which it cannot recover
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "503":
+          description: >-
+            Thrown when backend integration points experience a system/technical Error and is not reachable
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "504":
+          description: >-
+            Thrown when backedn inteegration points eperience timeout
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+    post:
+      tags:
+        - address-book-controller
+      operationId: createContact
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: x-username
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: addressId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContactRequest'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CreateContactResponse'
+        "400":
+          description: >-
+            Validation Error - Thrown if an input error is caught or unspecified Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "401":
+          description: >-
+            Unauthorised - Thrown when user is NOT authorised to call an API or perform a required functionality
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "403":
+          description: >-
+            Forbidden - Thrown when a user cannot access some data or resource
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "404":
+          description: >-
+            Resource Not Available
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "429":
+          description: >-
+            Too Many Requests
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "500":
+          description: >-
+            Thrown when the service is experiencing internal errors from which it cannot recover
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "503":
+          description: >-
+            Thrown when backend integration points experience a system/technical Error and is not reachable
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "504":
+          description: >-
+            Thrown when backedn inteegration points eperience timeout
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+  /v1/addressbooks/{addressId}/contact/{contractId}:
+    delete:
+      tags:
+        - address-book-controller
+      operationId: deleteContact
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: x-username
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: addressId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: contractId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: >-
+            Validation Error - Thrown if an input error is caught or unspecified Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "401":
+          description: >-
+            Unauthorised - Thrown when user is NOT authorised to call an API or perform a required functionality
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "403":
+          description: >-
+            Forbidden - Thrown when a user cannot access some data or resource
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "404":
+          description: >-
+            Resource Not Available
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "429":
+          description: >-
+            Too Many Requests
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "500":
+          description: >-
+            Thrown when the service is experiencing internal errors from which it cannot recover
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "503":
+          description: >-
+            Thrown when backend integration points experience a system/technical Error and is not reachable
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+        "504":
+          description: >-
+            Thrown when backedn inteegration points eperience timeout
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+components:
+  schemas:
+    ProblemDetail:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+        properties:
+          type: object
+          additionalProperties:
+            type: object
+    CreateAddressBookRequest:
+      required:
+        - addressBookName
+      type: object
+      properties:
+        addressBookName:
+          type: string
+    CreateAddressBookResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        user:
+          type: string
+    CreateContactRequest:
+      required:
+        - firstname
+        - phoneNumber
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        company:
+          type: string
+        phoneNumber:
+          pattern: "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[-\
+            \ ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$"
+          type: string
+          example: +61(02)89886551
+        type:
+          type: string
+          enum:
+            - HOME
+            - MOBILE
+            - WORK
+    CreateContactResponse:
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        company:
+          type: string
+        phoneNumber:
+          pattern: "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[-\
+            \ ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$"
+          type: string
+          example: +61(02)89886551
+        type:
+          type: string
+          enum:
+            - HOME
+            - MOBILE
+            - WORK
+        addressName:
+          type: string
+        username:
+          type: string
+    Pageable:
+      type: object
+      properties:
+        page:
+          minimum: 0
+          type: integer
+          format: int32
+        size:
+          minimum: 1
+          type: integer
+          format: int32
+        sort:
+          type: array
+          items:
+            type: string
+    GetContactResponse:
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        company:
+          type: string
+        phoneNumber:
+          pattern: "^(?:\\+?(61))? ?(?:\\((?=.*\\)))?(0?[2-57-8])\\)? ?(\\d\\d(?:[-\
+            \ ](?=\\d{3})|(?!\\d\\d[- ]?\\d[- ]))\\d\\d[- ]?\\d[- ]?\\d{3})$"
+          type: string
+        type:
+          type: string
+          enum:
+            - HOME
+            - MOBILE
+            - WORK
+    GetContactsResponse:
+      type: object
+      properties:
+        username:
+          type: string
+        addressId:
+          type: integer
+          format: int64
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetContactResponse'
+    PageGetContactsResponse:
+      type: object
+      properties:
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetContactsResponse'
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: '#/components/schemas/PageableObject'
+        first:
+          type: boolean
+        last:
+          type: boolean
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: '#/components/schemas/SortObject'
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        unsorted:
+          type: boolean
+        sorted:
+          type: boolean

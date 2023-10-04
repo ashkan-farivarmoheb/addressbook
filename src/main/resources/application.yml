@@ -1,0 +1,70 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+
+    health:
+      probes:
+        enabled: true
+      show-details: always
+    metrics:
+      enabled: true
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+
+server:
+  port: 8090
+  servlet:
+    context-path: /ms-address-book
+
+logging:
+  level:
+    graphql: INFO
+    org:
+      springframework:
+        graphql: DEBUG
+
+spring:
+  application:
+    name: address-book
+  flyway:
+    url: jdbc:postgresql://${datasource.postgres.host}:${datasource.postgres.port}/${datasource.postgres.dbname}
+    user: ${datasource.postgres.username}
+    password: ${datasource.postgres.password}
+    locations: ["classpath:db/migration"]
+    baseline-on-migrate: true
+    default-schema: reece
+    enabled: true
+  datasource:
+    url: jdbc:postgresql://${datasource.postgres.host}:${datasource.postgres.port}/${datasource.postgres.dbname}?reWriteBatchedInserts=true
+    username: ${datasource.postgres.username}
+    password: ${datasource.postgres.password}
+    driverClassName: org.postgresql.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimumIdle: 10
+      maximumPoolSize: 100
+      idleTimeout: 30000
+      poolName: SpringBootJPAHikariCP
+      maxLifetime: 2000000
+      connectionTimeout: 5000
+      connectionTestQuery: select 1
+      connectionInitSql: select 1
+    jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      open-in-view: false
+      generate-ddl: false
+      properties:
+        hibernate:
+          default_schema: reece
+          format_sql: true
+          jdbc:
+            lob:
+              non_contextual_creation: true

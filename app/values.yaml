@@ -1,0 +1,9 @@
+environment: develop
+replicaCount: 2
+
+image:
+  repository: dkr.ecr.us-east-2.amazonaws.com/rest-api:v1
+  pullPolicy: Always
+
+application:
+  name: ms-address-book

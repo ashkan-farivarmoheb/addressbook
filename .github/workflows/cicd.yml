@@ -1,0 +1,134 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: "integration"
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checkout Code"
+      uses: actions/checkout@v3
+
+    - name: Variables
+      id: vars
+      uses: actions/github-script@v3
+      with:
+        script: |
+          const tag = context.sha.substring(0,7)
+          const branch = context.ref.split('/').pop()
+          const { owner, repo } = context.repo;
+          core.exportVariable('BRANCH', branch);
+          core.exportVariable('TAG', tag);
+          core.exportVariable('REPOSITORY_NAME', repo);
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: clean build -x test
+    
+    - name: Running tests with Gradle
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: test
+    
+    - name: Component Test
+      id: component-test
+      run: |
+        ./gradlew componentTest
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
+        TAG: '${{ env.BRANCH }}-${{ env.TAG }}'
+        IMAGE_TAG: '${{ env.BRANCH }}-${{github.sha}}'
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"  
+  cd:
+    name: "deployment"
+    needs: [ci]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Variables
+        id: vars
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const tag = context.sha.substring(0,7)
+            const branch = context.ref.split('/').pop()
+            const { owner, repo } = context.repo;
+            core.exportVariable('BRANCH', branch);
+            core.exportVariable('TAG', tag);
+            core.exportVariable('REPOSITORY_NAME', repo);
+
+      - name: AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.25.0'
+        id: install
+        
+      - name: Update kube config
+        id: kube-context
+        run: | 
+          aws eks update-kubeconfig --name reece --region ${{ secrets.AWS_REGION }}
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+      
+      - name: Deploy to EKS
+        env:
+          ECR_REPOSITORY: ${{ env.REPOSITORY_NAME }}
+        run: |
+          helm upgrade --install --atomic --timeout 5m app ./app/ -f ./app/values.yaml \
+            --kube-context arn:aws:eks:${{ secrets.AWS_REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:cluster/reece --namespace ${{ env.BRANCH }} --create-namespace \
+            --set image.repository=${{ steps.login-ecr.outputs.registry }}/${{ env.REPOSITORY_NAME }}:${{ env.BRANCH }}-${{github.sha}} \
+            --set environment=${{ env.BRANCH }}
